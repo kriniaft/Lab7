@@ -145,6 +145,9 @@ public class DatabaseConnector {
         }
     }
 
+
+    
+
     public boolean login(String username, String password){
         boolean isLogin = false;
         try {
@@ -187,14 +190,6 @@ public class DatabaseConnector {
             throw new RuntimeException("SHA-384 not supported", e);
         }
     }
-
-
-
-
-
-
-
-
 
 
 
