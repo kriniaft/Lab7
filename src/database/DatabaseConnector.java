@@ -225,8 +225,49 @@ public class DatabaseConnector {
         return condition;
     }
 
+    public boolean removeByID(String username, int id) {
+        boolean success = false;
+        try {
+            connection.setAutoCommit(false);
+            String owner = null;
+            String chk = "SELECT created_by FROM person WHERE id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(chk)) {
+                ps.setInt(1, id);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) owner = rs.getString("created_by");
+                }
+            }
+            if (!username.equals(owner)) {
+                System.err.println("Невозможно удалить: элемент не найден либо вы пытаетесь удалить чужой труд, это не хорошо(.");
+                return false;
+            }
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM person WHERE id = ?")) {
+                ps.setInt(1, id);
+                if (ps.executeUpdate() > 0) {
+                    connection.commit();
+                    success = true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return success;
+    }
+
+
     private int minId() throws SQLException {
-        String sql = "SELECT id FROM music_bands ORDER BY id";
+        String sql = "SELECT id FROM person ORDER BY id";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             int number = 1;
