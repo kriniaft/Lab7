@@ -40,7 +40,7 @@ public class DatabaseConnector {
         )) {
             runner.runScript(fr);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Ошибка при работе с файлом");;
         }
     }
 
@@ -97,7 +97,7 @@ public class DatabaseConnector {
                 persons.add(person);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Ошибка при чтении скрипта SQL");;
         }
         return persons;
     }
@@ -112,12 +112,8 @@ public class DatabaseConnector {
                 long id = rs.getLong("id");
                 String login = rs.getString("login");
                 String hash = rs.getString("password_hash");
-                LocalDateTime created = rs.getTimestamp("created_at")
-                        .toLocalDateTime();
-                users.put(
-                        login,
-                        new Users(id, login, hash, created)
-                );
+                LocalDateTime created = rs.getTimestamp("created_at").toLocalDateTime();
+                users.put(login, new Users(id, login, hash, created));
             }
         } catch (SQLException e) {
             System.out.println("Ошибка  в сохранении пользователя");
@@ -145,9 +141,6 @@ public class DatabaseConnector {
             System.out.println("Ошибка регистрации");
         }
     }
-
-
-
 
     public boolean login(String username, String password){
         boolean isLogin = false;
